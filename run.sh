@@ -43,6 +43,18 @@ if [ "$1" = "import" ]; then
     exit 0
 fi
 
+if [ "$1" = "append" ]; then
+    # Initialize PostgreSQL
+    CreatePostgressqlConfig
+    service postgresql start
+       # Import data
+    sudo -u renderer osm2pgsql -d gis --append --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua -C 2048 --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf
+    service postgresql stop
+    exit 0
+fi
+
+
+
 if [ "$1" = "run" ]; then
     # Initialize PostgreSQL and Apache
     CreatePostgressqlConfig
